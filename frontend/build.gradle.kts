@@ -19,9 +19,10 @@ buildscript {
 
 frontend {
     nodeVersion.set("15.0.1")
-    cleanScript.set("run clean")
+    cleanScript.set("clean")
     installScript.set("install")
     assembleScript.set("run build")
+    verboseModeEnabled.set(true)
 }
 
 tasks.named("jar", Jar::class) {

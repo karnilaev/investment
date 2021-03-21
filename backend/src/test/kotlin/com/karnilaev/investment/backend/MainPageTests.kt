@@ -13,7 +13,7 @@ import org.springframework.test.web.reactive.server.WebTestClient
 @AutoConfigureWebTestClient
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
-class BackendApplicationTests {
+class MainPageTests {
 
 	@Autowired
 	lateinit var webTestClient: WebTestClient
