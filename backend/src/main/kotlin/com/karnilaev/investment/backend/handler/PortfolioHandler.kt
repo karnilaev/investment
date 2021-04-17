@@ -1,7 +1,7 @@
 package com.karnilaev.investment.backend.handler
 
 import com.karnilaev.investment.backend.domain.Portfolio
-import com.karnilaev.investment.backend.repo.PortfolioRepo
+import com.karnilaev.investment.backend.service.PortfolioService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.server.ServerRequest
@@ -12,13 +12,13 @@ import reactor.core.publisher.Mono
 @Component
 class PortfolioHandler(
     @Autowired
-    val portfolioRepo: PortfolioRepo
+    val service: PortfolioService
 ) {
 
     fun portfolios(request: ServerRequest): Mono<ServerResponse> {
         return ServerResponse.ok()
             .json()
-            .body(portfolioRepo.findAll(), Portfolio::class.java)
+            .body(service.list(), Portfolio::class.java)
     }
 
 }
