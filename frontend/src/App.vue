@@ -1,29 +1,12 @@
 <template>
-  Портфели:
-  <ul>
-    <li v-for="portfolio in portfolios" :key="portfolio.id">
-      {{ portfolio.name }}
-    </li>
-  </ul>
+  <div id="app">
+    <the-navbar></the-navbar>
+    <router-view></router-view>
+  </div>
 </template>
-
 <script>
+import TheNavbar from "@/components/TheNavbar";
 export default {
-  data() {
-    return {
-      portfolios: [],
-    };
-  },
-  async mounted() {
-    const response = await fetch("/api/portfolios", {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    this.portfolios = await response.json();
-  },
-  computed: {},
+  components: { TheNavbar },
 };
 </script>
-
-<style></style>

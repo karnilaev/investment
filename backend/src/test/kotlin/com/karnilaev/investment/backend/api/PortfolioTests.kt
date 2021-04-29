@@ -43,6 +43,19 @@ class PortfolioTests(
                         .value(containsInAnyOrder("Pension", "Education"))
     }
 
+    @Test
+    fun addNewPortfolio() {
+
+        val response = webTestClient
+            .post().uri("/api/portfolio")
+            .accept(MediaType.APPLICATION_JSON)
+            .bodyValue("\"id\":0,\"name\":\"Pension\"")
+            .exchange()
+
+        response.expectStatus().isOk
+
+    }
+
     private fun addPortfoliosWithNames(vararg portfolioNames: String) {
         val portfolios = portfolioNames.map { name -> Portfolio(0, name) }
         portfolioRepo.saveAll(portfolios).subscribe()
