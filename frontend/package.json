@@ -16,6 +16,7 @@
     "primevue": "^3.3.5",
     "vue": "^3.0.0",
     "vue-router": "^4.0.0-0",
+    "vue-spinner": "^1.0.4",
     "vuex": "^4.0.0-0"
   },
   "devDependencies": {

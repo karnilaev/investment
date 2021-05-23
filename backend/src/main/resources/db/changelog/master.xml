@@ -4,12 +4,43 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.2.xsd">
-    <changeSet author="Yuri Karnilaev" id="Karnilaev20200320">
+    <changeSet id="Karnilaev20210320" author="Yuri Karnilaev">
+        <createTable tableName="CURRENCY">
+            <column autoIncrement="true" name="id" type="INT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR(30)"/>
+            <column name="symbol" type="VARCHAR(5)"/>
+            <column name="inflation_rate" type="DECIMAL(4,1)" />
+        </createTable>
         <createTable tableName="PORTFOLIO">
             <column autoIncrement="true" name="id" type="INT">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
             <column name="name" type="VARCHAR(255)"/>
+            <column name="target" type="DECIMAL(20,2)"/>
+            <column name="target_date" type="DATE"/>
+            <column name="currency_id" type="INT">
+                <constraints foreignKeyName="id" referencedTableName="CURRENCY"/>
+            </column>
         </createTable>
+
+        <insert tableName="CURRENCY">
+            <column name="name">RUB</column>
+            <column name="inflation_rate">5</column>
+            <column name="symbol">₽</column>
+        </insert>
+        <insert tableName="CURRENCY">
+            <column name="name">USD</column>
+            <column name="inflation_rate">2</column>
+            <column name="symbol">$</column>
+        </insert>
+        <insert tableName="CURRENCY">
+            <column name="name">EUR</column>
+            <column name="inflation_rate">1.5</column>
+            <column name="symbol">€</column>
+        </insert>
+    </changeSet>
+    <changeSet id="Karnilaev20210510" author="Yuri Karnilaev">
     </changeSet>
 </databaseChangeLog>

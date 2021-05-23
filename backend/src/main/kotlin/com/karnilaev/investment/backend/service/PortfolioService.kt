@@ -10,24 +10,18 @@ import javax.sound.sampled.Port
 
 @Service
 class PortfolioService(
+
     @Autowired
     private val repo: PortfolioRepo
+
 ) {
 
-    fun list(): Flux<Portfolio> {
-        return repo.findAll()
-    }
+    fun list(): Flux<Portfolio> = repo.findAll()
 
-    fun delete(id: Int): Mono<Void> {
-        return repo.deleteById(id)
-    }
+    fun delete(portfolio: Portfolio): Mono<Void> = repo.delete(portfolio)
 
-    fun save(portfolio: Portfolio): Mono<Portfolio> {
-        return repo.save(portfolio)
-    }
+    fun save(portfolio: Portfolio): Mono<Portfolio> = repo.save(portfolio)
 
-    fun get(id: Int): Mono<Portfolio> {
-        return repo.findById(id)
-    }
+    fun findById(id: Int): Mono<Portfolio> = repo.findById(id)
 
 }
