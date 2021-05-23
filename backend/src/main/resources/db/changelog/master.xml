@@ -11,7 +11,7 @@
             </column>
             <column name="name" type="VARCHAR(30)"/>
             <column name="symbol" type="VARCHAR(5)"/>
-            <column name="inflation_rate" type="DECIMAL(4,1)" />
+            <column name="inflation_rate" type="DECIMAL(4,1)"/>
         </createTable>
         <createTable tableName="PORTFOLIO">
             <column autoIncrement="true" name="id" type="INT">
@@ -20,10 +20,14 @@
             <column name="name" type="VARCHAR(255)"/>
             <column name="target" type="DECIMAL(20,2)"/>
             <column name="target_date" type="DATE"/>
-            <column name="currency_id" type="INT">
-                <constraints foreignKeyName="id" referencedTableName="CURRENCY"/>
-            </column>
+            <column name="currency_id" type="INT"/>
         </createTable>
+
+        <addForeignKeyConstraint constraintName="fk_portfolio_currency_id"
+                                 baseColumnNames="currency_id"
+                                 baseTableName="PORTFOLIO"
+                                 referencedTableName="CURRENCY"
+                                 referencedColumnNames="id"/>
 
         <insert tableName="CURRENCY">
             <column name="name">RUB</column>

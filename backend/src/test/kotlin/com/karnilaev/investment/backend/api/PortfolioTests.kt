@@ -53,18 +53,17 @@ class PortfolioTests(
 
     @Test
     fun `add new portfolio`() {
-
         val response = webTestClient
             .post().uri("/api/v1/portfolio")
             .header("Content-Type", "application/json")
             .bodyValue(
                 """{
-                   |  "id":0,
-                   |  "name":"My pension",
-                   |  "target":1000.00,
-                   |  "targetDate":"2024-01-01",
-                   |  "currencyId":1
-                   |}""".trimMargin()
+                  |  "id":0,
+                  |  "name":"My pension",
+                  |  "target":1000.00,
+                  |  "targetDate":"2024-01-01",
+                  |  "currencyId":1
+                  |}""".trimMargin()
             )
             .exchange()
 
@@ -72,7 +71,50 @@ class PortfolioTests(
             .expectHeader().contentType(MediaType.APPLICATION_JSON)
             .expectBody()
             .jsonPath("$.id").value(not(0))
+    }
 
+    @Test
+    fun `400 status is returned by incorrect currency id in portfolio`() {
+        val response = webTestClient
+            .post().uri("/api/v1/portfolio")
+            .header("Content-Type", "application/json")
+            .bodyValue(
+                """{
+                  |  "id":0,
+                  |  "name":"My pension",
+                  |  "target":1000.00,
+                  |  "targetDate":"2024-01-01",
+                  |  "currencyId":999
+                  |}""".trimMargin()
+            )
+            .exchange()
+
+        response.expectStatus().isBadRequest
+    }
+
+    @Test
+    fun `edit existing portfolio`() {
+        val portfolio = addPortfoliosWithNames("Pension")[0]
+
+        webTestClient
+            .post().uri("/api/v1/portfolio")
+            .header("Content-Type", "application/json")
+            .bodyValue(
+                """{
+                  |  "id":${portfolio.id},
+                  |  "name":"My pension",
+                  |  "target":999.99,
+                  |  "targetDate":"2024-01-01",
+                  |  "currencyId":2
+                  |}""".trimMargin()
+            )
+            .exchange()
+
+        val changedPortfolio = getPortfolio(portfolio.id)!!
+        assertThat(changedPortfolio.name).isEqualTo("My pension")
+        assertThat(changedPortfolio.target).isEqualTo(BigDecimal("999.99"))
+        assertThat(changedPortfolio.targetDate).isEqualTo(LocalDate.of(2024, 1, 1))
+        assertThat(changedPortfolio.currencyId).isEqualTo(2)
     }
 
     @Test
@@ -104,14 +146,14 @@ class PortfolioTests(
     fun `delete portfolio by id`() {
         val portfolio = addPortfoliosWithNames("Pension")[0]
 
-        assertThat(portfolioIsExists(portfolio.id)).isTrue
+        assertThat(getPortfolio(portfolio.id)).isNotNull
 
         val response = webTestClient
             .delete().uri("/api/v1/portfolio/" + portfolio.id)
             .exchange()
 
         response.expectStatus().isOk
-        assertThat(portfolioIsExists(portfolio.id)).isFalse
+        assertThat(getPortfolio(portfolio.id)).isNull()
     }
 
     @Test
@@ -123,11 +165,8 @@ class PortfolioTests(
         response.expectStatus().isNotFound
     }
 
-    private fun portfolioIsExists(id: Int): Boolean {
-        var portfolioExists = false
-        portfolioRepo.findById(id)
-            .subscribe { portfolioExists = it != null }
-        return portfolioExists
+    private fun getPortfolio(id: Int): Portfolio? {
+        return portfolioRepo.findById(id).block()
     }
 
     private fun addPortfoliosWithNames(vararg portfolioNames: String): MutableList<Portfolio> {
