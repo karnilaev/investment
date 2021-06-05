@@ -35,6 +35,7 @@
 
 <script>
 import PulseLoader from "vue-spinner/src/PulseLoader.vue";
+import { mapActions, mapGetters } from "vuex";
 
 export default {
   data: () => ({
@@ -46,29 +47,23 @@ export default {
       target: 0,
       currencyId: 2,
     },
-    currencies: [
-      { id: 1, name: "RUB" },
-      { id: 2, name: "USD" },
-      { id: 3, name: "EUR" },
-    ],
     errors: { name: null },
   }),
-  beforeMount() {
+  async beforeMount() {
+    await this.loadCurrencies();
     if (this.$route.params.id) {
-      this.loadPortfolio();
+      const foundPortfolio = await this.portfolioById(this.$route.params.id);
+      if (foundPortfolio) {
+        this.portfolio = foundPortfolio;
+        this.loading = false;
+      }
     } else {
       this.loading = false;
     }
   },
   methods: {
-    loadPortfolio() {
-      fetch("/api/v1/portfolio/" + this.$route.params.id).then((response) =>
-        response.json().then((portfolio) => {
-          this.portfolio = portfolio;
-          this.loading = false;
-        })
-      );
-    },
+    ...mapActions("portfolio", ["portfolioById"]),
+    ...mapActions("currency", ["loadCurrencies"]),
     async savePortfolio() {
       if (!this.isValid()) {
         return;
@@ -81,7 +76,7 @@ export default {
         body: JSON.stringify(this.portfolio),
       });
       if (response.ok) {
-        await this.$router.push("/portfolio/list");
+        await this.$router.push({ name: "index" });
       }
     },
     isValid() {
@@ -93,6 +88,7 @@ export default {
     },
   },
   computed: {
+    ...mapGetters("currency", ["currencies"]),
     title() {
       if (this.$route.params.id) {
         return "Редактирование портфеля";

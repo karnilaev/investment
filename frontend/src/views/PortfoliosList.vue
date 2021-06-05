@@ -2,13 +2,16 @@
   <pulse-loader :loading="loading"></pulse-loader>
   <div v-if="!loading">
     Портфели
-    <button v-if="!portfoliosIsEmpty" @click="$router.push('/portfolio')">
+    <button
+      v-if="!portfoliosIsEmpty"
+      @click="$router.push({ name: 'portfolio' })"
+    >
       +
     </button>
     <div v-else>
       <p>
         Для добавления нового портфеля нажмите на кнопку
-        <button @click="$router.push('/portfolio')">Добавить</button>
+        <button @click="$router.push({ name: 'portfolio' })">Добавить</button>
       </p>
     </div>
     <ul>
@@ -18,7 +21,8 @@
         <button
           @click="
             $router.push({
-              path: '/portfolio/' + portfolio.id,
+              name: 'portfolio',
+              params: { id: portfolio.id },
             })
           "
         >
@@ -31,41 +35,21 @@
 
 <script>
 import PulseLoader from "vue-spinner/src/PulseLoader.vue";
+import { mapActions, mapGetters } from "vuex";
 
 export default {
-  data() {
-    return {
-      loading: true,
-      portfolios: [],
-    };
+  async beforeMount() {
+    await this.loadPortfolios();
+    this.loading = false;
   },
-  beforeMount() {
-    this.loadPortfolios();
+  data: () => {
+    return { loading: true };
   },
   methods: {
-    loadPortfolios() {
-      fetch("/api/v1/portfolio/list").then((response) =>
-        response.json().then((portfolio) => {
-          this.portfolios = portfolio;
-          this.loading = false;
-        })
-      );
-    },
-    async deletePortfolio(id) {
-      const response = await fetch("/api/v1/portfolio/" + id, {
-        method: "DELETE",
-      });
-      if (response.ok) {
-        const index = this.portfolios.findIndex(
-          (portfolio) => portfolio.id === id
-        );
-        if (index >= 0) {
-          this.portfolios.splice(index, 1);
-        }
-      }
-    },
+    ...mapActions("portfolio", ["loadPortfolios", "deletePortfolio"]),
   },
   computed: {
+    ...mapGetters("portfolio", ["portfolios"]),
     portfoliosIsEmpty() {
       return this.portfolios.length === 0;
     },
@@ -74,4 +58,4 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped></style>

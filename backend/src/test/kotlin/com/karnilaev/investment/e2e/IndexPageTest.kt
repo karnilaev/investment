@@ -12,8 +12,9 @@ class IndexPageTest {
     @Test
     internal fun headerTest() {
         open("/")
-        `$$`("header.navbar ul li").shouldHave(size(2))
-        `$$`("header.navbar ul li")[0].shouldHave(text("Главная"))
-        `$$`("header.navbar ul li")[1].shouldHave(text("Новый портфель"))
+        `$$`("#app").shouldHave(size(1))
+        `$$`("#app")[0].shouldHave(text("Войти в систему"))
+        `$$`("#app")[0].shouldHave(text("E-mail"))
+        `$$`("#app")[0].shouldHave(text("Пароль"))
     }
 }

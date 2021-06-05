@@ -1,18 +1,34 @@
 <template>
-  <header class="navbar">
+  <nav class="navbar">
     <ul>
       <li><router-link to="/">Главная</router-link></li>
-      <li><router-link to="/portfolio">Новый портфель</router-link></li>
+      <li>
+        <a href="#" @click.prevent="logout">Выход</a>
+      </li>
     </ul>
-  </header>
+  </nav>
 </template>
 
 <script>
-export default {};
+import { useRouter } from "vue-router";
+import { useStore } from "vuex";
+
+export default {
+  setup() {
+    const router = useRouter();
+    const store = useStore();
+    return {
+      logout: () => {
+        store.commit("auth/logout");
+        router.push({ name: "auth" });
+      },
+    };
+  },
+};
 </script>
 
 <style scoped>
-a.active-link {
+a.router-link-active {
   font-weight: bold;
 }
 </style>

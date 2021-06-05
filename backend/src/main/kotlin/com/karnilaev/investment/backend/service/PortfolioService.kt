@@ -6,16 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-import reactor.kotlin.adapter.rxjava.toFlowable
-import javax.sound.sampled.Port
 
 @Service
-class PortfolioService(
-
-    @Autowired
-    private val repo: PortfolioRepo
-
-) {
+class PortfolioService(@Autowired private val repo: PortfolioRepo) {
 
     fun list(): Flux<Portfolio> = repo.findAll()
 
