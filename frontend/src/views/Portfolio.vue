@@ -1,40 +1,61 @@
 <template>
-  <h1>{{ title }}</h1>
-  <pulse-loader :loading="loading"></pulse-loader>
-  <form class="portfolio" @submit.prevent="savePortfolio" v-if="!loading">
-    <div class="form-control">
-      <div>
-        <label for="name">Наименование:</label>
-        <input type="text" id="name" v-model.trim="portfolio.name" />
-      </div>
-      <div>
-        <label for="target">Сумма:</label>
-        <input type="number" id="target" v-model.number="portfolio.target" />
-        <select id="currency" v-model="portfolio.currencyId">
-          <option
-            v-for="currency in currencies"
-            :value="currency.id"
-            :key="currency.id"
-          >
-            {{ currency.name }}
-          </option>
-        </select>
-      </div>
-      <div>
-        <label for="target_date">Планируемая дата достижения цели:</label>
-        <input type="date" id="target_date" v-model="portfolio.targetDate" />
-      </div>
-      <small v-if="errors.name">{{ errors.name }}</small>
+  <div class="p-d-flex">
+    <div class="card">
+      <h3>{{ title }}</h3>
+      <pulse-loader :loading="loading"></pulse-loader>
+      <form class="card" @submit.prevent="savePortfolio" v-if="!loading">
+        <div class="p-field p-col-12 p-md-6">
+          <label for="name">Наименование</label>
+          <InputText id="name" type="text" v-model.trim="portfolio.name" />
+        </div>
+        <div class="p-field p-col-12 p-md-6">
+          <label for="target">Цель</label>
+          <InputNumber
+            id="target"
+            v-model="portfolio.target"
+            :minFractionDigits="2"
+            :maxFractionDigits="2"
+            mode="decimal"
+          />
+          <Dropdown
+            v-model="portfolio.currencyId"
+            :options="currencies"
+            optionLabel="name"
+            optionValue="id"
+            placeholder="Валюта"
+          />
+        </div>
+        <div class="p-field p-col-12 p-md-6">
+          <label for="start_date">Дата постановки цели</label>
+          <Calendar
+            id="start_date"
+            v-model="portfolio.startDate"
+            selectionMode="single"
+            dateFormat="yy-mm-dd"
+            :show-icon="true"
+          ></Calendar>
+        </div>
+        <div>
+          <Button type="submit" label="Сохранить" icon="pi pi-check" />
+          <Button
+            class="p-button-text"
+            label="Отмена"
+            icon="pi pi-times"
+            @click="$router.back()"
+          />
+        </div>
+      </form>
     </div>
-    <div>
-      <button type="submit">Сохранить</button>
-      <button type="reset" @click="$router.back()">Отмена</button>
-    </div>
-  </form>
+  </div>
 </template>
 
 <script>
 import PulseLoader from "vue-spinner/src/PulseLoader.vue";
+import InputNumber from "primevue/inputnumber";
+import InputText from "primevue/inputtext";
+import Button from "primevue/button";
+import Calendar from "primevue/calendar";
+import Dropdown from "primevue/dropdown";
 import { mapActions, mapGetters } from "vuex";
 
 export default {
@@ -43,6 +64,7 @@ export default {
     portfolio: {
       id: 0,
       name: "",
+      startDate: new Date().toISOString().slice(0, 10),
       targetDate: "0000-00-00",
       target: 0,
       currencyId: 2,
@@ -97,7 +119,14 @@ export default {
       }
     },
   },
-  components: { PulseLoader },
+  components: {
+    PulseLoader,
+    InputNumber,
+    InputText,
+    Calendar,
+    Button,
+    Dropdown,
+  },
 };
 </script>
 

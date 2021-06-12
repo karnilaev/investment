@@ -45,6 +45,9 @@
             <column name="symbol">€</column>
         </insert>
     </changeSet>
-    <changeSet id="Karnilaev20210510" author="Yuri Karnilaev">
+    <changeSet id="Karnilaev20210609" author="Yuri Karnilaev">
+        <addColumn tableName="PORTFOLIO">
+            <column name="start_date" type="DATE"/>
+        </addColumn>
     </changeSet>
 </databaseChangeLog>

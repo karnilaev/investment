@@ -1,44 +1,66 @@
 <template>
-  <pulse-loader :loading="loading"></pulse-loader>
-  <div v-if="!loading">
-    Портфели
-    <button
-      v-if="!portfoliosIsEmpty"
-      @click="$router.push({ name: 'portfolio' })"
-    >
-      +
-    </button>
-    <div v-else>
-      <p>
-        Для добавления нового портфеля нажмите на кнопку
-        <button @click="$router.push({ name: 'portfolio' })">Добавить</button>
-      </p>
+  <div class="p-flex-column">
+    <div>
+      <Button
+        label="Добавить сделку"
+        icon="pi pi-plus"
+        class="p-button-text"
+        @click="$router.push({ name: 'deal' })"
+      />
+      <Button
+        label="Добавить портфель"
+        icon="pi pi-plus"
+        class="p-button-text"
+        @click="$router.push({ name: 'portfolio' })"
+      />
     </div>
-    <ul>
-      <li v-for="portfolio in portfolios" :key="portfolio.id">
-        {{ portfolio.id + " " + portfolio.name }}
-        <button @click="deletePortfolio(portfolio.id)">Удалить</button>
-        <button
-          @click="
-            $router.push({
-              name: 'portfolio',
-              params: { id: portfolio.id },
-            })
-          "
+    <div class="card">
+      <DataTable :value="portfolios" :loading="loading" data-key="id">
+        <Column field="name" header="Наименование"></Column>
+        <Column field="startDate" header="Дата постановки"></Column>
+        <Column field="targetDate" header="Дата достижения"></Column>
+        <Column field="target" header="Сумма"></Column>
+        <Column header="Валюта"
+          ><template #body="slotProps">
+            {{ currencyName(slotProps.data.currencyId) }}
+          </template></Column
         >
-          Редактировать
-        </button>
-      </li>
-    </ul>
+        <Column header="Действия">
+          <template #body="slotProps">
+            <Button
+              type="button"
+              icon="pi pi-pencil"
+              class="p-button"
+              style="margin-right: 0.5em"
+              @click="
+                $router.push({
+                  name: 'portfolio',
+                  params: { id: slotProps.data.id },
+                })
+              "
+            ></Button>
+            <Button
+              type="button"
+              icon="pi pi-times"
+              class="p-button-danger"
+              @click="deletePortfolio(slotProps.data.id)"
+            ></Button>
+          </template>
+        </Column>
+      </DataTable>
+    </div>
   </div>
 </template>
 
 <script>
-import PulseLoader from "vue-spinner/src/PulseLoader.vue";
+import DataTable from "primevue/datatable";
+import Column from "primevue/column";
+import Button from "primevue/button";
 import { mapActions, mapGetters } from "vuex";
 
 export default {
   async beforeMount() {
+    await this.loadCurrencies();
     await this.loadPortfolios();
     this.loading = false;
   },
@@ -47,15 +69,25 @@ export default {
   },
   methods: {
     ...mapActions("portfolio", ["loadPortfolios", "deletePortfolio"]),
+    ...mapActions("currency", ["loadCurrencies"]),
+    currencyName(currencyId) {
+      return this.currencies.find((currency) => currency.id === currencyId)
+        .name;
+    },
   },
   computed: {
     ...mapGetters("portfolio", ["portfolios"]),
+    ...mapGetters("currency", ["currencies"]),
     portfoliosIsEmpty() {
       return this.portfolios.length === 0;
     },
   },
-  components: { PulseLoader },
+  components: { DataTable, Column, Button },
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.p-button {
+  margin-right: 0.5rem;
+}
+</style>

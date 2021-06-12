@@ -25,6 +25,11 @@ data class Portfolio(
     @get:NotNull @get:Digits(integer = 20, fraction = 2) @get:DecimalMin(value = "0.00", inclusive = false)
     val target: BigDecimal,
 
+    @Column("start_date")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @get:NotNull
+    val startDate: LocalDate,
+
     @Column("target_date")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @get:NotNull

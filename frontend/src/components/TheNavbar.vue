@@ -1,15 +1,9 @@
 <template>
-  <nav class="navbar">
-    <ul>
-      <li><router-link to="/">Главная</router-link></li>
-      <li>
-        <a href="#" @click.prevent="logout">Выход</a>
-      </li>
-    </ul>
-  </nav>
+  <Menubar :model="items" />
 </template>
 
 <script>
+import Menubar from "primevue/menubar";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 
@@ -24,6 +18,23 @@ export default {
       },
     };
   },
+  data() {
+    return {
+      items: [
+        {
+          label: "Главная",
+          icon: "pi pi-fw pi-home",
+          to: { name: "index" },
+        },
+        {
+          label: "Выход",
+          icon: "pi pi-fw pi-power-off",
+          to: { name: "auth" },
+        },
+      ],
+    };
+  },
+  components: { Menubar },
 };
 </script>
 
